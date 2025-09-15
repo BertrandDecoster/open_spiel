@@ -155,6 +155,19 @@ Multiple language bindings available:
 
 Python API closely mirrors C++ API, with many objects available in both languages for performance flexibility.
 
+## Play as a human
+
+### 2-player human vs human on small grid
+  python play_companion_human.py --game=companion_simple --rows=4 --cols=4
+
+### 3-player mixed on large grid
+  python play_companion_human.py --game=companion_synchro --num_agents=3 --players=human,human,random --rows=8 --cols=8
+
+### Quick AI-only test
+  python play_companion_human.py --players=random,random --horizon=10
+
+
+
 ## Common Issues and Solutions
 
 ### Game Registration Issues in Python
