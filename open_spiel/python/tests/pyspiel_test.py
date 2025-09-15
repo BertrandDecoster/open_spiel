@@ -51,6 +51,8 @@ EXPECTED_MANDATORY_GAMES = frozenset([
     "clobber",
     "coin_game",
     "colored_trails",
+    "companion_simple",
+    "companion_synchro",
     "connect_four",
     "coop_box_pushing",
     "coop_to_1p",

@@ -42,6 +42,15 @@ set(GAME_SOURCES
   colored_trails/colored_trails.cc
   colored_trails/colored_trails.h
   colored_trails/colored_trails_utils.cc
+  companion/companion_types.h
+  companion/companion_grid.cc
+  companion/companion_grid.h
+  companion/companion_base.cc
+  companion/companion_base.h
+  companion/companion_simple.cc
+  companion/companion_simple.h
+  companion/companion_synchro.cc
+  companion/companion_synchro.h
   connect_four/connect_four.cc
   connect_four/connect_four.h
   coop_box_pushing/coop_box_pushing.cc
@@ -368,6 +377,14 @@ add_executable(colored_trails_board_generator
 add_executable(colored_trails_test colored_trails/colored_trails_test.cc ${OPEN_SPIEL_OBJECTS}
                $<TARGET_OBJECTS:tests>)
 add_test(colored_trails_test colored_trails_test)
+
+add_executable(companion_simple_test companion/companion_simple_test.cc ${OPEN_SPIEL_OBJECTS}
+               $<TARGET_OBJECTS:tests>)
+add_test(companion_simple_test companion_simple_test)
+
+add_executable(companion_synchro_test companion/companion_synchro_test.cc ${OPEN_SPIEL_OBJECTS}
+               $<TARGET_OBJECTS:tests>)
+add_test(companion_synchro_test companion_synchro_test)
 
 add_executable(connect_four_test connect_four/connect_four_test.cc ${OPEN_SPIEL_OBJECTS}
                $<TARGET_OBJECTS:tests>

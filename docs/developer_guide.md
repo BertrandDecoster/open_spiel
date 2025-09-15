@@ -65,35 +65,56 @@ games and any special considerations are noted in the steps.
     *   In the new files, rename `TicTacToeGame` and `TicTacToeState` to
         `NewGameGame` and `NewGameState`.
     *   At the top of `new_game.cc`, change the short name to `new_game` and
-        include the new game’s header.
-5.  Update Python integration tests:
+        include the new game's header.
+5.  **CRITICAL**: Ensure Python bindings can access the game registration:
+    *   If the game has Python bindings (files `games_new_game.h` and
+        `games_new_game.cc` in `open_spiel/python/pybind11/`), add an explicit
+        reference to the factory function to prevent linker dead code elimination.
+    *   In `games_new_game.cc`, add after includes:
+        ```cpp
+        // Force linking of new game registration
+        namespace open_spiel {
+        namespace new_game {
+        extern std::shared_ptr<const Game> Factory(const GameParameters& params);
+        }
+        }
+        ```
+    *   In the `init_pyspiel_games_new_game` function, add at the beginning:
+        ```cpp
+        // Force reference to factory to ensure registration code is linked
+        (void)new_game::Factory;
+        ```
+    *   This ensures the game's `.cc` file (containing `REGISTER_SPIEL_GAME`)
+        is linked into the Python module. Without this, the game will build
+        successfully but won't appear in `pyspiel.registered_games()`.
+6.  Update Python integration tests:
     *   Add the short name to the list of expected games in
         `open_spiel/python/tests/pyspiel_test.py`.
-6.  You should now have a duplicate game of Tic-Tac-Toe under a different name.
+7.  You should now have a duplicate game of Tic-Tac-Toe under a different name.
     It should build and the test should run, and can be verified by rebuilding
     and running the example `build/examples/example --game=new_game`. Note:
     Python games cannot be run using this example; use
     `open_spiel/python/examples/example.py` instead. 
-7.  Now, change the implementations of the functions in `NewGameGame` and
-    `NewGameState` to reflect your new game’s logic. Most API functions should
+8.  Now, change the implementations of the functions in `NewGameGame` and
+    `NewGameState` to reflect your new game's logic. Most API functions should
     be clear from the game you copied from. If not, each API function that is
     overridden will be fully documented in superclasses in `open_spiel/spiel.h`.
-8.  To test the game as it is being built, you can play test the functionality
+9.  To test the game as it is being built, you can play test the functionality
     interactively using `ConsolePlayTest` in
     `open_spiel/tests/console_play_test.h`. At the very least, the test should
     include some random simulation tests (see other game's tests for an
     example). Note: Python games cannot be tested using `ConsolePlayTest`,
     however both C++ and Python games can also be tested on the console using
     `open_spiel/python/examples/mcts_example` with human players.
-9.  Run your code through a linter so it conforms to Google's
+10. Run your code through a linter so it conforms to Google's
     [style guides](https://google.github.io/styleguide/). For C++ use
     [cpplint](https://pypi.org/project/cpplint/). For Python, use
     [pylint](https://pypi.org/project/pylint/) with the
     [pylintrc from the Google style guide](https://google.github.io/styleguide/pyguide.html).
     There is also [YAPF](https://github.com/google/yapf/) for Python as well.
-10. Once done, rebuild and rerun the tests to ensure everything passes
-    (including your new game’s test!).
-11. Add a playthrough file to catch regressions:
+11. Once done, rebuild and rerun the tests to ensure everything passes
+    (including your new game's test!).
+12. Add a playthrough file to catch regressions:
     *   Run `./open_spiel/scripts/generate_new_playthrough.sh new_game` to
         generate a random game, to be used by integration tests to prevent any
         regression. `open_spiel/integration_tests/playthrough_test.py` will

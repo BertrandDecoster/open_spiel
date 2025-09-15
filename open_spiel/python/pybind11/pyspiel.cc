@@ -16,6 +16,7 @@
 #include <exception>  // NOLINT
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -31,6 +32,8 @@
 #include "open_spiel/games/efg_game/efg_game.h"
 #include "open_spiel/games/efg_game/efg_game_data.h"
 #include "open_spiel/games/nfg_game/nfg_game.h"
+#include "open_spiel/games/companion/companion_simple.h"
+#include "open_spiel/games/companion/companion_synchro.h"
 #include "open_spiel/matrix_game.h"
 #include "open_spiel/normal_form_game.h"
 #include "open_spiel/observer.h"
@@ -46,7 +49,13 @@
 #include "open_spiel/python/pybind11/games_bridge.h"
 #include "open_spiel/python/pybind11/games_chess.h"
 #include "open_spiel/python/pybind11/games_colored_trails.h"
+#include "open_spiel/python/pybind11/games_companion_base.h"
+#include "open_spiel/python/pybind11/games_companion_simple.h"
+#include "open_spiel/python/pybind11/games_companion_synchro.h"
 #include "open_spiel/python/pybind11/games_connect_four.h"
+// Force linking of companion games
+#include "open_spiel/games/companion/companion_simple.h"
+#include "open_spiel/games/companion/companion_synchro.h"
 #include "open_spiel/python/pybind11/games_crazy_eights.h"
 #include "open_spiel/python/pybind11/games_dots_and_boxes.h"
 #include "open_spiel/python/pybind11/games_euchre.h"
@@ -706,6 +715,9 @@ PYBIND11_MODULE(pyspiel, m) {
   init_pyspiel_games_bridge(m);
   init_pyspiel_games_chess(m);
   init_pyspiel_games_colored_trails(m);
+  init_pyspiel_games_companion_base(m);
+  init_pyspiel_games_companion_simple(m);
+  init_pyspiel_games_companion_synchro(m);
   init_pyspiel_games_connect_four(m);
   init_pyspiel_games_crazy_eights(m);
   init_pyspiel_games_dots_and_boxes(m);

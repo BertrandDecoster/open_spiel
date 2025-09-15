@@ -51,6 +51,12 @@ set(PYTHON_BINDINGS ${PYTHON_BINDINGS}
   pybind11/games_crazy_eights.h
   pybind11/games_colored_trails.cc
   pybind11/games_colored_trails.h
+  pybind11/games_companion_base.cc
+  pybind11/games_companion_base.h
+  pybind11/games_companion_simple.cc
+  pybind11/games_companion_simple.h
+  pybind11/games_companion_synchro.cc
+  pybind11/games_companion_synchro.h
   pybind11/games_connect_four.cc
   pybind11/games_connect_four.h
   pybind11/games_dots_and_boxes.cc
