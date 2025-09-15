@@ -49,6 +49,9 @@ class CompanionState : public SimMoveState {
   // Clone() is implemented by derived classes since CompanionState is abstract
   std::vector<Action> LegalActions(Player player) const override;
 
+  // Access to grid for display purposes
+  const Grid& GetGrid() const { return grid_; }
+
  protected:
   // Core game loop implementation
   void DoApplyActions(const std::vector<Action>& actions) override;

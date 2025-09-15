@@ -106,13 +106,19 @@ void CompanionSimpleState::SetupGrid() {
     // Horizontal wall
     for (int col = 1; col < cols - 1; ++col) {
       if (col != cols / 2) {  // Leave a gap in the middle
-        PlaceWall(rows / 2, col);
+        // Don't place walls on goal position
+        if (!(rows / 2 == goal_row_ && col == goal_col_)) {
+          PlaceWall(rows / 2, col);
+        }
       }
     }
 
     // Vertical wall
     for (int row = 1; row < rows / 2; ++row) {
-      PlaceWall(row, cols / 2);
+      // Don't place walls on goal position
+      if (!(row == goal_row_ && cols / 2 == goal_col_)) {
+        PlaceWall(row, cols / 2);
+      }
     }
   }
 }

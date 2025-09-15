@@ -18,12 +18,29 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <random>
 
 #include "open_spiel/spiel_utils.h"
 #include "open_spiel/games/companion/companion_types.h"
 
 namespace open_spiel {
 namespace companion {
+
+// Iterator-like class for distributing empty cells (like Python yield)
+class EmptyCellIterator {
+ public:
+  EmptyCellIterator(const std::vector<std::pair<int, int>>& cells,
+                    std::mt19937& rng);
+
+  // Get next empty cell (like Python yield)
+  std::pair<int, int> GetNext();
+  bool HasNext() const;
+  int RemainingCount() const;
+
+ private:
+  std::vector<std::pair<int, int>> cells_;
+  size_t current_index_;
+};
 
 // Grid class that manages the game state including the 2D grid of cells
 // and all actors (agents, doors, ground items). Uses value semantics for
@@ -81,6 +98,9 @@ class Grid {
   const AgentData* GetAgentAt(int row, int col) const;
   AgentData* GetAgentAt(int row, int col);
 
+  // Get agent character with color information (for display)
+  char GetAgentDisplayChar(int row, int col, int& out_color_id) const;
+
   // Get all agent IDs at a position
   std::vector<int> GetAgentIdsAt(int row, int col) const;
 
@@ -111,6 +131,9 @@ class Grid {
 
   // Apply valid moves to agents
   void ApplyMoves(const std::vector<std::pair<int, std::pair<int, int>>>& moves);
+
+  // Update agent directions based on movement actions
+  void UpdateAgentDirections(const std::vector<ActionType>& actions);
 
   // Handle interactions (doors, picking up items)
   void ProcessInteractions(const std::vector<ActionType>& actions);

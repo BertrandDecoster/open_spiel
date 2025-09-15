@@ -167,6 +167,9 @@ void CompanionState::ProcessTimestep(const std::vector<ActionType>& typed_action
   // Apply moves
   grid_.ApplyMoves(moves);
 
+  // Update agent directions based on movement actions
+  grid_.UpdateAgentDirections(typed_actions);
+
   // Process interactions
   grid_.ProcessInteractions(typed_actions);
 

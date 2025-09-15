@@ -72,6 +72,26 @@ AgentData* Grid::GetAgentAt(int row, int col) {
   return nullptr;
 }
 
+char Grid::GetAgentDisplayChar(int row, int col, int& out_color_id) const {
+  const AgentData* agent = GetAgentAt(row, col);
+  if (agent == nullptr) {
+    out_color_id = -1;  // No agent
+    return '.';
+  }
+
+  // Set color ID based on agent's color
+  out_color_id = static_cast<int>(agent->color);
+
+  // Return direction character
+  switch (agent->direction) {
+    case Direction::kNorth: return '^';
+    case Direction::kEast:  return '>';
+    case Direction::kSouth: return 'v';
+    case Direction::kWest:  return '<';
+    default: return '^';  // Fallback
+  }
+}
+
 std::vector<int> Grid::GetAgentIdsAt(int row, int col) const {
   std::vector<int> agent_ids;
   for (const auto& agent : agents_) {
@@ -270,6 +290,32 @@ void Grid::ApplyMoves(const std::vector<std::pair<int, std::pair<int, int>>>& mo
     if (agent != nullptr) {
       agent->row = new_row;
       agent->col = new_col;
+    }
+  }
+}
+
+void Grid::UpdateAgentDirections(const std::vector<ActionType>& actions) {
+  for (size_t i = 0; i < agents_.size() && i < actions.size(); ++i) {
+    AgentData& agent = agents_[i];
+    ActionType action = actions[i];
+
+    // Update direction only for movement actions
+    switch (action) {
+      case ActionType::kNorth:
+        agent.direction = Direction::kNorth;
+        break;
+      case ActionType::kEast:
+        agent.direction = Direction::kEast;
+        break;
+      case ActionType::kSouth:
+        agent.direction = Direction::kSouth;
+        break;
+      case ActionType::kWest:
+        agent.direction = Direction::kWest;
+        break;
+      default:
+        // For Interact and Stay actions, keep current direction
+        break;
     }
   }
 }
