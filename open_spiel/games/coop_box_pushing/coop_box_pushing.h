@@ -68,7 +68,7 @@ enum class ActionType { kTurnLeft, kTurnRight, kMoveForward, kStay };
 class CoopBoxPushingState : public SimMoveState {
  public:
   CoopBoxPushingState(std::shared_ptr<const Game> game, int horizon,
-                      bool fully_observable);
+                      bool fully_observable, int curriculum_level = 10);
 
   std::string ActionToString(Player player, Action action) const override;
   std::string ToString() const override;
@@ -111,6 +111,12 @@ class CoopBoxPushingState : public SimMoveState {
   // Observation planes for the fully-observable case.
   int ObservationPlane(std::pair<int, int> coord, Player player) const;
 
+  // Curriculum initialization methods.
+  void InitializeCurriculumLevel(int curriculum_level);
+  void InitializeLevelCloseRange(int level);
+  void InitializeLevelWithDistance(int level);
+  void InitializeOriginalConfiguration();
+
   // Fields sets to bad/invalid values. Use Game::NewInitialState().
   double total_rewards_ = -1;
   int horizon_ = -1;  // Limit on the total number of moves.
@@ -151,6 +157,7 @@ class CoopBoxPushingGame : public SimMoveGame {
  private:
   int horizon_;
   bool fully_observable_;
+  int curriculum_level_;
 };
 
 }  // namespace coop_box_pushing

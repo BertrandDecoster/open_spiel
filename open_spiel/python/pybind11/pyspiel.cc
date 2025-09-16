@@ -32,6 +32,7 @@
 #include "open_spiel/games/efg_game/efg_game.h"
 #include "open_spiel/games/efg_game/efg_game_data.h"
 #include "open_spiel/games/nfg_game/nfg_game.h"
+// Force linking of companion games
 #include "open_spiel/games/companion/companion_simple.h"
 #include "open_spiel/games/companion/companion_synchro.h"
 #include "open_spiel/matrix_game.h"
@@ -53,9 +54,6 @@
 #include "open_spiel/python/pybind11/games_companion_simple.h"
 #include "open_spiel/python/pybind11/games_companion_synchro.h"
 #include "open_spiel/python/pybind11/games_connect_four.h"
-// Force linking of companion games
-#include "open_spiel/games/companion/companion_simple.h"
-#include "open_spiel/games/companion/companion_synchro.h"
 #include "open_spiel/python/pybind11/games_crazy_eights.h"
 #include "open_spiel/python/pybind11/games_dots_and_boxes.h"
 #include "open_spiel/python/pybind11/games_euchre.h"
@@ -95,7 +93,7 @@
 #include "open_spiel/python/pybind11/games_universal_poker.h"
 #endif
 
-#define PYSPIEL_VERSION "1.6.1"
+#define PYSPIEL_VERSION "1.6.1.01"
 
 // Flags governing Open Spiel behaviour
 ABSL_FLAG(bool, log_exceptions_to_stderr, true,

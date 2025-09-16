@@ -70,6 +70,24 @@ void TestCompanionSynchroTwoAgentCoordination() {
 
   // Check initial state has synchro cells and agents
   std::string initial_state = state->ToString();
+
+  size_t start_pos = 0;
+  // Loop to find the position after the 5th newline
+  for (int i = 0; i < 5; ++i) {
+      start_pos = initial_state.find('\n', start_pos);
+      if (start_pos == std::string::npos) {
+          // Handle case where there are fewer than 5 lines
+          std::cerr << "Error: The string does not have 5 lines to skip." << std::endl;
+          SPIEL_CHECK_TRUE(false);  // Force failure
+      }
+      // Move past the found newline character for the next search
+      start_pos++;
+  }
+
+  // Create a new string containing just the grid
+  initial_state = initial_state.substr(start_pos);
+
+
   SPIEL_CHECK_TRUE(initial_state.find("S") != std::string::npos);  // Synchro cells present
 
   // Count agents
@@ -88,6 +106,7 @@ void TestCompanionSynchroTwoAgentCoordination() {
       synchro_count++;
     }
   }
+
   SPIEL_CHECK_EQ(synchro_count, 2);  // Should have 2 synchro cells for 2 agents
 }
 

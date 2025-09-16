@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <random>
 #include <utility>
 
 #include "open_spiel/spiel.h"
@@ -60,6 +61,7 @@ constexpr double kBigBoxReward = 100;
 // Default parameters.
 constexpr int kDefaultHorizon = 100;
 constexpr bool kDefaultFullyObservable = false;
+constexpr int kDefaultCurriculumLevel = 10;
 
 constexpr std::array<int, 4> row_offsets = {{-1, 0, 1, 0}};
 constexpr std::array<int, 4> col_offsets = {{0, 1, 0, -1}};
@@ -81,7 +83,8 @@ const GameType kGameType{
     /*provides_observation_tensor=*/true,
     /*parameter_specification=*/
     {{"fully_observable", GameParameter(kDefaultFullyObservable)},
-     {"horizon", GameParameter(kDefaultHorizon)}}};
+     {"horizon", GameParameter(kDefaultHorizon)},
+     {"curriculum_level", GameParameter(kDefaultCurriculumLevel)}}};
 
 std::shared_ptr<const Game> Factory(const GameParameters& params) {
   return std::shared_ptr<const Game>(new CoopBoxPushingGame(params));
@@ -153,7 +156,7 @@ std::pair<int, int> NextCoord(std::pair<int, int> coord, int direction) {
 }  // namespace
 
 CoopBoxPushingState::CoopBoxPushingState(std::shared_ptr<const Game> game,
-                                         int horizon, bool fully_observable)
+                                         int horizon, bool fully_observable, int curriculum_level)
     : SimMoveState(game),
       total_rewards_(0),
       horizon_(horizon),
@@ -167,17 +170,8 @@ CoopBoxPushingState::CoopBoxPushingState(std::shared_ptr<const Game> game,
           {ActionStatusType::kUnresolved, ActionStatusType::kUnresolved}) {
   field_.resize(kRows * kCols, '.');
 
-  // Small boxes.
-  SetField({3, 1}, 'b');
-  SetField({3, 6}, 'b');
-
-  // Big box.
-  SetField({3, 3}, 'B');
-  SetField({3, 4}, 'B');
-
-  // Agents.
-  SetPlayer({6, 1}, 0, OrientationType::kEast);
-  SetPlayer({6, 6}, 1, OrientationType::kWest);
+  // Initialize positions based on curriculum level.
+  InitializeCurriculumLevel(curriculum_level);
 }
 
 std::string CoopBoxPushingState::ActionToString(Player player,
@@ -541,10 +535,104 @@ std::unique_ptr<State> CoopBoxPushingState::Clone() const {
   return std::unique_ptr<State>(new CoopBoxPushingState(*this));
 }
 
+void CoopBoxPushingState::InitializeCurriculumLevel(int curriculum_level) {
+  if (curriculum_level <= 3) {
+    InitializeLevelCloseRange(curriculum_level);
+  } else if (curriculum_level < 10) {
+    InitializeLevelWithDistance(curriculum_level);
+  } else {
+    InitializeOriginalConfiguration();
+  }
+}
+
+void CoopBoxPushingState::InitializeLevelCloseRange(int level) {
+  // Levels 0-3: Close to goal with varying positions and orientations
+  // All have boxes at row 1, agents at row 2
+  SetField({1, 1}, 'b');  // Small boxes at row 1
+  SetField({1, 6}, 'b');
+  SetField({1, 3}, 'B');  // Big box at row 1
+  SetField({1, 4}, 'B');
+
+  switch (level) {
+    case 0:
+      // Level 0: Agents directly behind big box, facing North (optimal position)
+      SetPlayer({2, 3}, 0, OrientationType::kNorth);
+      SetPlayer({2, 4}, 1, OrientationType::kNorth);
+      break;
+    case 1:
+      // Level 1: Agents slightly to the side, facing NorthEast/NorthWest
+      SetPlayer({2, 2}, 0, OrientationType::kNorth);
+      SetPlayer({2, 5}, 1, OrientationType::kNorth);
+      break;
+    case 2:
+      // Level 2: Agents need to turn first (facing East/West)
+      SetPlayer({2, 3}, 0, OrientationType::kEast);
+      SetPlayer({2, 4}, 1, OrientationType::kWest);
+      break;
+    case 3:
+      // Level 3: Agents at corners, need to navigate and turn
+      SetPlayer({2, 1}, 0, OrientationType::kEast);
+      SetPlayer({2, 6}, 1, OrientationType::kWest);
+      break;
+  }
+}
+
+void CoopBoxPushingState::InitializeLevelWithDistance(int level) {
+  // Levels 4-9: Increasing distance with randomization
+  int box_row = 2 + (level - 4) / 2;  // Box row: 2,2,3,3,3,3
+  int agent_row = box_row + 1 + (level - 4) % 2;  // Agent row increases
+
+  // Clamp to valid ranges
+  box_row = std::min(box_row, 5);
+  agent_row = std::min(agent_row, 7);
+
+  // Place boxes at calculated row
+  SetField({box_row, 1}, 'b');
+  SetField({box_row, 6}, 'b');
+  SetField({box_row, 3}, 'B');
+  SetField({box_row, 4}, 'B');
+
+  // For higher levels, add some randomization to prevent overfitting
+  // Use level as seed for consistency
+  std::mt19937 rng(level);
+  std::uniform_int_distribution<int> col_dist(0, 7);
+  std::uniform_int_distribution<int> orient_dist(0, 3);
+
+  if (level >= 7) {
+    // Higher levels: randomized positions and orientations
+    int col1, col2;
+    do {
+      col1 = col_dist(rng);
+      col2 = col_dist(rng);
+    } while (std::abs(col1 - col2) < 2 || col1 == col2);  // Ensure agents aren't too close
+
+    SetPlayer({agent_row, col1}, 0, static_cast<OrientationType>(orient_dist(rng)));
+    SetPlayer({agent_row, col2}, 1, static_cast<OrientationType>(orient_dist(rng)));
+  } else {
+    // Mid-levels: some variation but not fully random
+    int offset = (level - 4) % 3;
+    SetPlayer({agent_row, 1 + offset}, 0, OrientationType::kNorth);
+    SetPlayer({agent_row, 6 - offset}, 1, OrientationType::kNorth);
+  }
+}
+
+void CoopBoxPushingState::InitializeOriginalConfiguration() {
+  // Level 10: Original hard configuration
+  SetField({3, 1}, 'b');
+  SetField({3, 6}, 'b');
+  SetField({3, 3}, 'B');
+  SetField({3, 4}, 'B');
+  SetPlayer({6, 1}, 0, OrientationType::kEast);
+  SetPlayer({6, 6}, 1, OrientationType::kWest);
+}
+
 CoopBoxPushingGame::CoopBoxPushingGame(const GameParameters& params)
     : SimMoveGame(kGameType, params),
       horizon_(ParameterValue<int>("horizon")),
-      fully_observable_(ParameterValue<bool>("fully_observable")) {}
+      fully_observable_(ParameterValue<bool>("fully_observable")),
+      curriculum_level_(ParameterValue<int>("curriculum_level")) {
+        std::cout << "======================================Curriculum level: " << curriculum_level_ << std::endl;
+      }
 
 std::vector<int> CoopBoxPushingGame::ObservationTensorShape() const {
   if (fully_observable_) {
@@ -562,7 +650,7 @@ int CoopBoxPushingGame::NumPlayers() const { return kNumPlayers; }
 
 std::unique_ptr<State> CoopBoxPushingGame::NewInitialState() const {
   std::unique_ptr<State> state(
-      new CoopBoxPushingState(shared_from_this(), horizon_, fully_observable_));
+      new CoopBoxPushingState(shared_from_this(), horizon_, fully_observable_, curriculum_level_));
   return state;
 }
 
@@ -571,7 +659,7 @@ std::unique_ptr<State> CoopBoxPushingGame::NewInitialState() const {
 // handed out at the end of the episode, so multiply this lower bound by the
 // episode length.
 double CoopBoxPushingGame::MaxUtility() const {
-  return MaxGameLength() * NumPlayers() * (kBigBoxReward + kDelayPenalty);
+  return NumPlayers() * (kBigBoxReward + kSmallBoxReward);
 }
 
 double CoopBoxPushingGame::MinUtility() const {

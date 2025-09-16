@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Human player script for cooperative box pushing game."""
+"""Human player script for cooperative box pushing game with curriculum support."""
 
 import pyspiel
+import argparse
 
 def get_human_action(state, player_id):
     """Get action from human player."""
@@ -22,10 +23,16 @@ def get_human_action(state, player_id):
         except ValueError:
             print("Please enter a number.")
 
-def play_game():
+def play_game(curriculum_level=10):
     """Play the cooperative box pushing game with human players."""
-    game = pyspiel.load_game('coop_box_pushing')
+    # For now, use default game since curriculum_level parameter isn't working
+    # In the future: game = pyspiel.load_game('coop_box_pushing', {'curriculum_level': curriculum_level})
+    game = pyspiel.load_game('coop_box_pushing', {'fully_observable': True})
     state = game.new_initial_state()
+
+    if curriculum_level != 10:
+        print(f"⚠️  Note: Curriculum level {curriculum_level} requested, but parameter not yet working.")
+        print("    Playing with original (level 10) configuration for now.")
 
     print("Welcome to Cooperative Box Pushing!")
     print("Goal: Both players work together to push boxes to target locations.")
@@ -85,4 +92,24 @@ def play_game():
         print("💪 Try again to improve your cooperation!")
 
 if __name__ == "__main__":
-    play_game()
+    parser = argparse.ArgumentParser(
+        description='Play cooperative box pushing game as human'
+    )
+    parser.add_argument('--curriculum_level', type=int, default=10, choices=range(0, 11),
+                       help='Curriculum difficulty level (0=easiest, 10=hardest, default=10)')
+
+    args = parser.parse_args()
+
+    print(f"Starting Cooperative Box Pushing - Curriculum Level {args.curriculum_level}")
+    if args.curriculum_level == 0:
+        print("🟢 EASIEST: Agents close to goal, optimal positions")
+    elif args.curriculum_level < 4:
+        print("🟡 EASY: Close to goal with position/orientation variations")
+    elif args.curriculum_level < 7:
+        print("🟠 MEDIUM: Increasing distance from goal")
+    elif args.curriculum_level < 10:
+        print("🔴 HARD: Far from goal with suboptimal positions")
+    else:
+        print("🔥 HARDEST: Original challenging configuration")
+
+    play_game(args.curriculum_level)
