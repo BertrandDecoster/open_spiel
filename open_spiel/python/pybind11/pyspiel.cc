@@ -50,6 +50,7 @@
 #include "open_spiel/python/pybind11/games_bridge.h"
 #include "open_spiel/python/pybind11/games_chess.h"
 #include "open_spiel/python/pybind11/games_colored_trails.h"
+#include "open_spiel/python/pybind11/sim_move.h"
 #include "open_spiel/python/pybind11/games_companion_base.h"
 #include "open_spiel/python/pybind11/games_companion_simple.h"
 #include "open_spiel/python/pybind11/games_companion_synchro.h"
@@ -713,6 +714,7 @@ PYBIND11_MODULE(pyspiel, m) {
   init_pyspiel_games_bridge(m);
   init_pyspiel_games_chess(m);
   init_pyspiel_games_colored_trails(m);
+  init_pyspiel_sim_move(m);
   init_pyspiel_games_companion_base(m);
   init_pyspiel_games_companion_simple(m);
   init_pyspiel_games_companion_synchro(m);

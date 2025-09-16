@@ -157,7 +157,7 @@ Python API closely mirrors C++ API, with many objects available in both language
 
 ## Play as a human
 
-### 2-player human vs human on small grid
+### 2-player human + human on small grid
   python play_companion_human.py --game=companion_simple --rows=4 --cols=4
 
 ### 3-player mixed on large grid
