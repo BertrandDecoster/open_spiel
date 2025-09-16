@@ -47,7 +47,7 @@ const GameType kSimpleGameType = {
     {{"rows", GameParameter(kDefaultRows)},
      {"cols", GameParameter(kDefaultCols)},
      {"horizon", GameParameter(kDefaultHorizon)},
-     {"num_agents", GameParameter(kDefaultNumAgents)}}
+     {"players", GameParameter(kDefaultNumAgents)}}
 };
 
 std::shared_ptr<const Game> SimpleFactory(const GameParameters& params) {
@@ -160,13 +160,6 @@ std::unique_ptr<State> CompanionSimpleGame::NewInitialState() const {
       new CompanionSimpleState(shared_from_this(), horizon_, num_agents_));
 }
 
-std::string CompanionSimpleGame::ToString() const {
-  return absl::StrCat(
-      "companion_simple(rows=", rows_,
-      ",cols=", cols_,
-      ",horizon=", horizon_,
-      ",num_agents=", num_agents_, ")");
-}
 
 }  // namespace companion
 }  // namespace open_spiel

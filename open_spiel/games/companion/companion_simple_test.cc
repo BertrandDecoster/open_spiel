@@ -47,7 +47,7 @@ void TestCompanionSimpleWithCustomParameters() {
   auto game = LoadGame("companion_simple", {{"rows", GameParameter(5)},
                                            {"cols", GameParameter(5)},
                                            {"horizon", GameParameter(50)},
-                                           {"num_agents", GameParameter(3)}});
+                                           {"players", GameParameter(3)}});
   SPIEL_CHECK_TRUE(game != nullptr);
   SPIEL_CHECK_EQ(game->NumPlayers(), 3);
 
@@ -65,7 +65,7 @@ void TestCompanionSimpleWithCustomParameters() {
 void TestCompanionSimpleBasicGameplay() {
   auto game = LoadGame("companion_simple", {{"rows", GameParameter(3)},
                                            {"cols", GameParameter(3)},
-                                           {"num_agents", GameParameter(1)}});
+                                           {"players", GameParameter(1)}});
   auto state = game->NewInitialState();
 
   // Agent should start at bottom-left, goal at top-right
@@ -99,7 +99,7 @@ void TestCompanionSimpleBasicGameplay() {
 void TestCompanionSimpleCollisionResolution() {
   auto game = LoadGame("companion_simple", {{"rows", GameParameter(3)},
                                            {"cols", GameParameter(3)},
-                                           {"num_agents", GameParameter(2)}});
+                                           {"players", GameParameter(2)}});
   auto state = game->NewInitialState();
 
   // Both agents try to move to the same position

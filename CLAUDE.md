@@ -161,7 +161,7 @@ Python API closely mirrors C++ API, with many objects available in both language
   python play_companion_human.py --game=companion_simple --rows=4 --cols=4
 
 ### 3-player mixed on large grid
-  python play_companion_human.py --game=companion_synchro --num_agents=3 --players=human,human,random --rows=8 --cols=8
+  python play_companion_human.py --game=companion_synchro --num_players=3 --players=human,human,random --rows=8 --cols=8
 
 ### Quick AI-only test
   python play_companion_human.py --players=random,random --horizon=10

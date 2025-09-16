@@ -32,7 +32,7 @@ namespace companion {
 //   "rows"       int     Number of rows in the grid           (default = 8)
 //   "cols"       int     Number of columns in the grid        (default = 8)
 //   "horizon"    int     Maximum episode length               (default = 100)
-//   "num_agents" int     Number of agents                     (default = 2)
+//   "players"    int     Number of players                    (default = 2)
 
 class CompanionSimpleState : public CompanionState {
  public:
@@ -59,7 +59,6 @@ class CompanionSimpleGame : public CompanionGame {
   std::unique_ptr<State> NewInitialState() const override;
 
   // Game information
-  std::string ToString() const;
 
  private:
   static GameType CreateGameType();

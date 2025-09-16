@@ -707,6 +707,7 @@ PYBIND11_MODULE(pyspiel, m) {
   init_pyspiel_evaluation_elo(m);           // Elo rating system.
   init_pyspiel_evaluation_sco(m);           // Soft Condorcet Optimization.
   init_pyspiel_game_transforms(m);          // Game transformations.
+  init_pyspiel_sim_move(m);                 // SimMove and related algorithms.
   // Game-specific functions.
   init_pyspiel_games_backgammon(m);
   init_pyspiel_games_bargaining(m);
@@ -714,7 +715,6 @@ PYBIND11_MODULE(pyspiel, m) {
   init_pyspiel_games_bridge(m);
   init_pyspiel_games_chess(m);
   init_pyspiel_games_colored_trails(m);
-  init_pyspiel_sim_move(m);
   init_pyspiel_games_companion_base(m);
   init_pyspiel_games_companion_simple(m);
   init_pyspiel_games_companion_synchro(m);

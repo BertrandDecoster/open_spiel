@@ -316,7 +316,7 @@ CompanionGame::CompanionGame(const GameParameters& params, const GameType& game_
   rows_ = ParameterValue<int>("rows", 8);
   cols_ = ParameterValue<int>("cols", 8);
   horizon_ = ParameterValue<int>("horizon", 100);
-  num_agents_ = ParameterValue<int>("num_agents", 2);
+  num_agents_ = ParameterValue<int>("players", 2);
 
   SPIEL_CHECK_GT(rows_, 0);
   SPIEL_CHECK_GT(cols_, 0);

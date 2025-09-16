@@ -47,7 +47,7 @@ void TestCompanionSynchroWithCustomParameters() {
   auto game = LoadGame("companion_synchro", {{"rows", GameParameter(6)},
                                             {"cols", GameParameter(6)},
                                             {"horizon", GameParameter(75)},
-                                            {"num_agents", GameParameter(4)}});
+                                            {"players", GameParameter(4)}});
   SPIEL_CHECK_TRUE(game != nullptr);
   SPIEL_CHECK_EQ(game->NumPlayers(), 4);
 
@@ -65,7 +65,7 @@ void TestCompanionSynchroWithCustomParameters() {
 void TestCompanionSynchroTwoAgentCoordination() {
   auto game = LoadGame("companion_synchro", {{"rows", GameParameter(3)},
                                             {"cols", GameParameter(3)},
-                                            {"num_agents", GameParameter(2)}});
+                                            {"players", GameParameter(2)}});
   auto state = game->NewInitialState();
 
   // Check initial state has synchro cells and agents
@@ -113,7 +113,7 @@ void TestCompanionSynchroTwoAgentCoordination() {
 void TestCompanionSynchroSingleAgentSuccess() {
   auto game = LoadGame("companion_synchro", {{"rows", GameParameter(3)},
                                             {"cols", GameParameter(3)},
-                                            {"num_agents", GameParameter(1)}});
+                                            {"players", GameParameter(1)}});
   auto state = game->NewInitialState();
 
   // Single agent should have one synchro cell in center
@@ -135,7 +135,7 @@ void TestCompanionSynchroSingleAgentSuccess() {
 void TestCompanionSynchroObservationTensor() {
   auto game = LoadGame("companion_synchro", {{"rows", GameParameter(4)},
                                             {"cols", GameParameter(4)},
-                                            {"num_agents", GameParameter(3)}});
+                                            {"players", GameParameter(3)}});
   auto state = game->NewInitialState();
 
   // Test observation tensor shape
@@ -162,7 +162,7 @@ void TestCompanionSynchroObservationTensor() {
 void TestCompanionSynchroCollisionHandling() {
   auto game = LoadGame("companion_synchro", {{"rows", GameParameter(5)},
                                             {"cols", GameParameter(5)},
-                                            {"num_agents", GameParameter(2)}});
+                                            {"players", GameParameter(2)}});
   auto state = game->NewInitialState();
 
   // Apply some random actions to test collision handling

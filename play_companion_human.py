@@ -81,13 +81,13 @@ _GAME_STRING = flags.DEFINE_enum(
 # Game parameters
 _ROWS = flags.DEFINE_integer("rows", 6, "Number of rows in the grid")
 _COLS = flags.DEFINE_integer("cols", 6, "Number of columns in the grid")
-_NUM_AGENTS = flags.DEFINE_integer("num_agents", 2, "Number of agents/players")
+_NUM_PLAYERS = flags.DEFINE_integer("num_players", 2, "Number of agents/players")
 _HORIZON = flags.DEFINE_integer("horizon", 50, "Maximum game length")
 
 # Player types
 _PLAYER_TYPES = flags.DEFINE_list(
     "players", ["human", "human"],
-    "Player types (human, random). Length must match num_agents."
+    "Player types (human, random). Length must match num_players."
 )
 
 # Display options
@@ -496,21 +496,21 @@ def main(_):
     """Main function to set up and play the game."""
 
     # Validate parameters
-    if _NUM_AGENTS.value < 1:
-        print("❌ Error: num_agents must be at least 1")
+    if _NUM_PLAYERS.value < 1:
+        print("❌ Error: num_players must be at least 1")
         return
 
-    if len(_PLAYER_TYPES.value) != _NUM_AGENTS.value:
+    if len(_PLAYER_TYPES.value) != _NUM_PLAYERS.value:
         print(f"❌ Error: Number of player types ({len(_PLAYER_TYPES.value)}) "
-              f"must match num_agents ({_NUM_AGENTS.value})")
-        print(f"   Use: --players={','.join(['human'] * _NUM_AGENTS.value)}")
+              f"must match num_players ({_NUM_PLAYERS.value})")
+        print(f"   Use: --players={','.join(['human'] * _NUM_PLAYERS.value)}")
         return
 
     # Set up game parameters
     params = {
         'rows': _ROWS.value,
         'cols': _COLS.value,
-        'num_agents': _NUM_AGENTS.value,
+        'players': _NUM_PLAYERS.value,
         'horizon': _HORIZON.value
     }
 
@@ -549,16 +549,16 @@ if __name__ == "__main__":
     print("  # Basic 2-player game")
     print("  python play_companion_human.py --game=companion_simple --rows=4 --cols=4")
     print("  # 3-player mixed game")
-    print("  python play_companion_human.py --num_agents=3 --players=human,human,random")
+    print("  python play_companion_human.py --num_players=3 --players=human,human,random")
     print("  # 4-player synchro game")
-    print("  python play_companion_human.py --game=companion_synchro --num_agents=4 --players=human,random,random,random")
+    print("  python play_companion_human.py --game=companion_synchro --num_players=4 --players=human,random,random,random")
     print("  # Disable arrow keys or colors")
     print("  python play_companion_human.py --noarrow_keys --nocolor")
     print()
     print("Player configuration:")
-    print("  --num_agents=N        Number of players (2-8)")
+    print("  --num_players=N       Number of players (2-8)")
     print("  --players=type1,type2 Player types: human, random")
-    print("  Example: --num_agents=4 --players=human,human,random,random")
+    print("  Example: --num_players=4 --players=human,human,random,random")
     print()
     print("Features:")
     print("  • Arrow key controls: ←↑↓→ movement, Space=interact, Enter=stay (default ON)")

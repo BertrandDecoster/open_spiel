@@ -48,7 +48,7 @@ const GameType kSynchroGameType = {
     {{"rows", GameParameter(kSynchroDefaultRows)},
      {"cols", GameParameter(kSynchroDefaultCols)},
      {"horizon", GameParameter(kSynchroDefaultHorizon)},
-     {"num_agents", GameParameter(kSynchroDefaultNumAgents)}}
+     {"players", GameParameter(kSynchroDefaultNumAgents)}}
 };
 
 std::shared_ptr<const Game> SynchroFactory(const GameParameters& params) {
@@ -224,13 +224,6 @@ std::unique_ptr<State> CompanionSynchroGame::NewInitialState() const {
       new CompanionSynchroState(shared_from_this(), horizon_, num_agents_));
 }
 
-std::string CompanionSynchroGame::ToString() const {
-  return absl::StrCat(
-      "companion_synchro(rows=", rows_,
-      ",cols=", cols_,
-      ",horizon=", horizon_,
-      ",num_agents=", num_agents_, ")");
-}
 
 }  // namespace companion
 }  // namespace open_spiel
